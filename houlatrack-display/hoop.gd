@@ -27,7 +27,7 @@ func _process(delta):
 		
 		global_position = Vector3(x,y,z)
 		global_rotation_degrees = Vector3(90+p,0,0)
-		rotate(Vector3(0,0,1),deg_to_rad(90+a))
+		rotate(Vector3(0,0,1),deg_to_rad(90-a))
 
 	for i in range(0, peers.size()):
 		pass # Do something with the connected peers.

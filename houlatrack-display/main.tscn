@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://b6kxfelvdtcpb" path="res://hoop.gd" id="1_ig7tw"]
 
 [sub_resource type="TorusMesh" id="TorusMesh_7dm0k"]
-inner_radius = 0.9
+inner_radius = 0.45
+outer_radius = 0.5
 
 [node name="Node3D" type="Node3D"]
 
@@ -12,7 +13,7 @@ mesh = SubResource("TorusMesh_7dm0k")
 script = ExtResource("1_ig7tw")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.70607)
+fov = 50.0
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.67048, 2.78395)

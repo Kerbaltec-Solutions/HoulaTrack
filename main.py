@@ -239,15 +239,18 @@ class SliderWindow(QMainWindow):
             
         #if enough points are found, fit an ellipse to the coordinates
         if len(coords) >= 5:
+            frame_width = frame.shape[1]
+            frame_height = frame.shape[0]
             ellipse = cv2.fitEllipse(coords)
             # Extract the parameters of the fitted ellipse
             pos = ellipse[0]
             size = ellipse[1][1]
             ratio = ellipse[1][0] / ellipse[1][1]
             angle = ellipse[2]
-            
+
             # Calculate the distance of the hoop from the camera
-            distance = (self.c[1] * self.c[0]) / size
+            ang_size = (size/frame_width) * self.c[0]
+            distance = self.c[1] / (2 * np.tan(np.radians(ang_size / 2)))
 
             # get ratio of visible hoop above and below major axis, to determine, which side of the hoop is facing the camera (the other side is occluded by human)
             above_line = 0
@@ -285,21 +288,15 @@ class SliderWindow(QMainWindow):
                 #draw the ellipse
                 cv2.ellipse(frame, ellipse, (0, 255, 0), 2)
 
-            # Calculate absolute x and y positions
-            frame_width = frame.shape[1]
-            frame_height = frame.shape[0]
-            # Convert pos from pixel coordinates to normalized coordinates (-1 to 1)
-            normalized_x = (pos[0] - frame_width / 2) / (frame_width / 2)
-            normalized_y = (pos[1] - frame_height / 2) / (frame_height / 2)
-            # Calculate the field of view in radians
-            fov_x = np.radians(self.c[0])
-            fov_y = fov_x * (frame_height / frame_width)  # Adjust FOV for aspect ratio
-            # Calculate absolute positions in the real world
-            absolute_x = distance * np.tan(normalized_x * (fov_x / 2))
-            absolute_y = distance * np.tan(normalized_y * (fov_y / 2))
+            # Convert pos from pixel coordinates to angular diversion
+            pos = np.array([pos[0] - frame_width/2, pos[1] - frame_height/2])
+            angular_pos = pos * (2/frame_width) * self.c[0]
+            # Calculate absolute x and y position based on angular position and distance
+            absolute_x = distance * np.sin(np.radians(angular_pos[0]))
+            absolute_y = distance * np.sin(np.radians(angular_pos[1]))
 
             # prepare message and yeet to udp receiver
-            message = f"{absolute_x},{absolute_y},{distance/10},{angle},{pitch}"
+            message = f"{absolute_x/100},{absolute_y/100},{distance/100},{angle},{pitch}"
             sock.sendto(message.encode(), (godot_host, godot_port))
         
         # if vizualization is on, display camera image
