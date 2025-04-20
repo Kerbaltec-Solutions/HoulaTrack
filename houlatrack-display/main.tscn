@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://bkvivlpdhwe74"]
+
+[ext_resource type="Script" uid="uid://b6kxfelvdtcpb" path="res://hoop.gd" id="1_ig7tw"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_7dm0k"]
+inner_radius = 0.9
+
+[node name="Node3D" type="Node3D"]
+
+[node name="hoop" type="MeshInstance3D" parent="."]
+mesh = SubResource("TorusMesh_7dm0k")
+script = ExtResource("1_ig7tw")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.70607)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.67048, 2.78395)
