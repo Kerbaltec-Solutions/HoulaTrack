@@ -1,6 +1,10 @@
-# This is Houlatrack
+<figure>
+    <img src="https://github.com/Kerbaltec-Solutions/HoulaTrack/blob/main/houlatrack.GIF"
+         alt="preview video">
+    <figcaption><i>keep in mind, that this video was made under bad conditions, you can see position and rotation tracking working, however tilt direction aproximation does not work</i></figcaption>
+</figure>
 
-![Preview Video](https://github.com/Kerbaltec-Solutions/HoulaTrack/blob/main/houlatrack.GIF "*keep in mind, that this video was made under bad conditions, you can see position and rotation tracking working, however tilt direction aproximation does not work*")
+# This is Houlatrack
 
 This python program is intedet to track a single houlahoop from a live camera capture. 
 
