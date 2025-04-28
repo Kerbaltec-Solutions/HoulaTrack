@@ -47,6 +47,7 @@ Spacial data is provided as [x,y,z,tilt(left/right),pitch(foreward/backward)]
 
 4. The framerate might be very low right now, worry not, this will improve.
 5. Adjust the hue, saturation and value sliders so, that the hoop is clearly vissible and uninterupted in the KIV. 
+   * If you are tracking a red hoop, click the `Hue Out-Of Range` button to switch to the mode of the same name. 
    * Raise the minimum and lower the maximum of each slider until the hoop starts to get filtered out
    * Then go over all values again to filter out background noise as good as possible without disrupting the hoop too much
 6. Now adjust the values of the Edge-radius and Edge-threshold sliders, until there is a nice white line running along the center of the hoop and nowhere else in the KIV. 
@@ -75,4 +76,4 @@ Spacial data is provided as [x,y,z,tilt(left/right),pitch(foreward/backward)]
 * Determining, which side of the hoop points towards the camera is tricky and highly dependant on a good hsv-keying of the hoop. While basic tracking might work in suboptimal conditions, Tilt-direction-detection might be more instable.
 * It may be benificial to lower the cameras resolution to allow for higher framerate. This can be done by edinting lines 13 and 14 in the `main.py` file. The default should work well tho.
 * In normal operation, you can disable the Preview windows by clicking `Stop Vizualization`. This frees up performance for higher framerate and other programs
-* The program will work best with a matte, uniformly colored hoop, that does not share it's color with the surroundings and is not red.
+* The program will work best with a matte, uniformly colored hoop, that does not share it's color with the surroundings.

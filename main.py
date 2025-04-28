@@ -36,6 +36,7 @@ class SliderWindow(QMainWindow):
         self.central_widget.setLayout(self.layout)
 
         # Initialize parameters
+        self.ho = False
         self.h = [0,255]
         self.s = [0,255]
         self.v = [0,255]
@@ -129,6 +130,11 @@ class SliderWindow(QMainWindow):
         self.visualize_button.clicked.connect(self.toggle_visualization)
         button_layout.addWidget(self.visualize_button)
 
+        # Button to toggle Hue Out of range mode. Useful for red Objects
+        self.hue_outside_button = QPushButton("Hue Out-Of Range Mode")
+        self.hue_outside_button.clicked.connect(self.toggle_hue_outside)
+        button_layout.addWidget(self.hue_outside_button)
+
         # Buttons to save and load parameters
         self.save_button = QPushButton("Save Parameters")
         self.save_button.clicked.connect(self.saveParameters)
@@ -150,6 +156,13 @@ class SliderWindow(QMainWindow):
             self.visualize_button.setText("Start Visualization")
             self.camera_label.setText("Visualization disabled...")
             self.edges_label.clear()
+
+    def toggle_hue_outside(self):
+        self.ho = not self.ho
+        if self.ho:
+            self.hue_outside_button.setText("Hue In Range Mode")
+        else:
+            self.hue_outside_button.setText("Hue Out-Of Range Mode")
 
     # Update the ranges of the sliders
     def update_hue_range(self):
@@ -188,6 +201,7 @@ class SliderWindow(QMainWindow):
             f.write(f"{self.v[0]},{self.v[1]}\n")
             f.write(f"{self.e[0]},{self.e[1]}\n")
             f.write(f"{self.c[0]},{self.c[1]}\n")
+            f.write(f"{self.ho}")
         messageBox("Parameters Saved", "Parameters saved successfully.", QMessageBox.Icon.Information)
     
     # Load parameters from file
@@ -200,6 +214,7 @@ class SliderWindow(QMainWindow):
                 self.v = list(map(int, lines[2].strip().split(",")))
                 self.e = list(map(int, lines[3].strip().split(",")))
                 self.c = list(map(int, lines[4].strip().split(",")))
+                self.ho = bool(lines[5].strip())
             messageBox("Parameters Loaded", "Parameters loaded successfully.", QMessageBox.Icon.Information)
         except FileNotFoundError:
             messageBox("Loading Failed", "No parameter-file found!", QMessageBox.Icon.Warning)
@@ -215,7 +230,12 @@ class SliderWindow(QMainWindow):
             return
         
         # hsv range keying
-        gray = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), np.array((self.h[0],self.s[0],self.v[0])), np.array((self.h[1],self.s[1],self.v[1])))
+        if self.ho:
+            gray1 = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), np.array((0,self.s[0],self.v[0])), np.array((self.h[0],self.s[1],self.v[1])))
+            gray2 = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), np.array((self.h[1],self.s[0],self.v[0])), np.array((255,self.s[1],self.v[1])))
+            gray = gray1+gray2
+        else:
+            gray = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), np.array((self.h[0],self.s[0],self.v[0])), np.array((self.h[1],self.s[1],self.v[1])))
         edge_r=self.e[0]*2+1
         # Apply Gaussian blur and thresholding to remove small-scale noise
         blurred = cv2.GaussianBlur(gray, (edge_r, edge_r), 0).astype(np.uint8)
