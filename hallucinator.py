@@ -39,10 +39,11 @@ rx_pack = []
 
 def udp_listener():
     global rx_pack
+    ts=time.clock_gettime_ns(time.CLOCK_REALTIME)
     while True:
         try:
             data, addr = sock.recvfrom(1024)  # Buffer size is 1024 bytes
-            rx_pack.append((data, addr))
+            rx_pack.append((data, addr, (time.clock_gettime_ns(time.CLOCK_REALTIME)-ts)/1000000))
         except socket.error:
             print("ERR")
             break
@@ -51,15 +52,23 @@ def udp_listener():
 listener_thread = threading.Thread(target=udp_listener, daemon=True)
 listener_thread.start()
 
+sample_len = 100
+samples = []
+times = []
+
 emptys = 0
 try:
     while True:
         if len(rx_pack)>1:
             print(emptys)
             emptys = 0
-            data,addr = rx_pack.pop(0)
-            print(f"Received message: {data.decode('utf-8')} from {addr}")
-        elif len(rx_pack)>0:
+            data,addr,t = rx_pack.pop(0)
+            samples.append(list(map(float, data.decode('utf-8').strip().replace("[","").replace("]","").split(","))))
+            times.append(t)
+            #print(f"Received message: {data.decode('utf-8')} from {addr}")
+        if len(times)>sample_len:
+            times.pop(0)
+            samples.pop(0)
             message = rx_pack[-1][0].decode('utf-8')
             sock.sendto(message.encode(), (UDP_IP_out, UDP_PORT_out))
             emptys += 1
