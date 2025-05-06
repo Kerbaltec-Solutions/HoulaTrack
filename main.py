@@ -201,7 +201,7 @@ class SliderWindow(QMainWindow):
             f.write(f"{self.v[0]},{self.v[1]}\n")
             f.write(f"{self.e[0]},{self.e[1]}\n")
             f.write(f"{self.c[0]},{self.c[1]}\n")
-            f.write(f"{self.ho}")
+            f.write(f"{int(self.ho)}")
         messageBox("Parameters Saved", "Parameters saved successfully.", QMessageBox.Icon.Information)
     
     # Load parameters from file
@@ -214,7 +214,7 @@ class SliderWindow(QMainWindow):
                 self.v = list(map(int, lines[2].strip().split(",")))
                 self.e = list(map(int, lines[3].strip().split(",")))
                 self.c = list(map(int, lines[4].strip().split(",")))
-                self.ho = bool(lines[5].strip())
+                self.ho = bool(int(lines[5].strip()))
             messageBox("Parameters Loaded", "Parameters loaded successfully.", QMessageBox.Icon.Information)
         except FileNotFoundError:
             messageBox("Loading Failed", "No parameter-file found!", QMessageBox.Icon.Warning)
